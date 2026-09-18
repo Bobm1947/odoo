@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Odoo. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <record id="view_order_form_two_tier_credit_warning" model="ir.ui.view">
+        <field name="name">sale.order.form.two.tier.credit.warning</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+            <!-- Re-target core's existing banner div to the 'over' tier only,
+                 and restyle it red (was alert-warning, shared with the
+                 'approaching' tier below). -->
+            <xpath expr="//field[@name='partner_credit_warning']/.."
+                   position="attributes">
+                <attribute name="class">alert alert-danger</attribute>
+                <attribute name="invisible">credit_warning_level != 'over'</attribute>
+            </xpath>
+            <!-- Icon + label cue for color-independence (a11y). Decorative
+                 only (severity is conveyed by label text/color per the
+                 UI/UX doc) -> aria-hidden alone, no role="img". -->
+            <xpath expr="//field[@name='partner_credit_warning']"
+                   position="before">
+                <i class="fa fa-exclamation-circle"
+                   title="Over credit limit" aria-hidden="true"/>
+            </xpath>
+            <!-- Append our breakdown text after core's headline message. -->
+            <xpath expr="//field[@name='partner_credit_warning']"
+                   position="after">
+                <field name="credit_limit_detail" nolabel="1"/>
+            </xpath>
+            <!-- New sibling banner for the earlier, 'approaching' tier.
+                 role="alert" on both tiers per the DECIDED UI/UX doc
+                 (customer-credit-limit-warning-banner-uiux.md Accessibility
+                 Requirements: "role=alert on both divs"). -->
+            <xpath expr="//field[@name='partner_credit_warning']/.."
+                   position="after">
+                <div class="alert alert-warning" role="alert"
+                     invisible="credit_warning_level != 'approaching'">
+                    <i class="fa fa-exclamation-triangle"
+                       title="Approaching credit limit" aria-hidden="true"/>
+                    <field name="credit_warning_level" invisible="1"/>
+                    <field name="credit_limit_detail" nolabel="1"/>
+                </div>
+            </xpath>
+        </field>
+    </record>
+</odoo>

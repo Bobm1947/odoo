@@ -26,6 +26,7 @@ This module never modifies the Invoicing (account.move) credit warning.
     'depends': ['sale'],
     'data': [
         'data/ir_config_parameter.xml',
+        'views/sale_order_views.xml',
     ],
     'installable': True,
     'auto_install': False,
