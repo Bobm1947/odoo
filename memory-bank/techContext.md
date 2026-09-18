@@ -39,6 +39,17 @@
 - **Filestore** — Odoo's own filesystem-based attachment storage (`odoo-filestore` volume in docker-compose, mounted to `/var/lib/odoo`)
 - No other DB/cache technology (no Redis/Elasticsearch config at repo root)
 
+## Repository Structure
+
+### Addons Directory
+
+Key first-party addons include:
+- `addons/sale/` — Sales orders, quotations, shared credit machinery
+- `addons/account/` — Invoicing, accounting, credit limit configuration
+- `addons/sale_credit_limit_warning/` — **NEW (Phase 1)** — Two-tier approaching/exceeded customer credit limit banner on Sales Orders; extends `sale.order` with non-stored computed fields `credit_warning_level` (Selection: none/approaching/over) and `credit_limit_detail` (Text), configurable threshold via `ir.config_parameter`
+
+Plus 618+ other first-party modules covering CRM, Inventory, HR, Manufacturing, etc., and 228+ `l10n_*` localization packages.
+
 ## Infrastructure
 
 - **Docker**: root `Dockerfile` builds from `python:3.12-slim`, installs system build deps (build-essential, libxml2/libxslt/libldap/libsasl2/libssl/libjpeg/libpq/libffi/zlib headers), Node.js tooling (`npm`, `node-less`, global `rtlcss`), wkhtmltopdf-adjacent fonts; installs Python deps from `requirements.txt`; exposes port 8069; runs `odoo-bin`.
