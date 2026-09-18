@@ -1,13 +1,13 @@
 ---
 slug: customer-credit-limit-warning
 feature: customer-credit-limit-warning
-status: PLANNING_COMPLETE
+status: CREATIVE_COMPLETE
 ---
 
 # customer-credit-limit-warning: Customer Credit Limit Warning
 
 **Complexity**: Level 3 (inherited from customer-credit-limit-warning)
-**Status**: PLANNING_COMPLETE
+**Status**: CREATIVE_COMPLETE
 **Roadmap**: customer-credit-limit-warning
 **Branch**: feature/customer-credit-limit-warning
 **Worktree**: N/A
@@ -131,21 +131,32 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 
 ## Creative Phases
 
-- [ ] Architecture Design → resolve Creative Q1 (extend shared `_build_credit_warning_message()` vs. new `sale.order`-only compute vs. new addon `_inherit`-extending the existing compute — the Guiding-Principle-aligned default) and Q4 (multi-currency/multi-company parity scope, Invoicing scope-creep guardrail) — pending
-- [ ] UI/UX Design → resolve Creative Q2 (visual severity color mapping — does today's over-limit yellow become red, a behavior change for existing users?) and Q3 (80% boundary/rounding semantics and message copy) — pending
+- [x] User Journey Design → `memory-bank/creative/customer-credit-limit-warning-banner-user-journey.md` — Decision: Option 1, Enriched Passive Two-Tier Banner (evolution in place, no new interaction). Normative threshold semantics (>=80% inclusive → yellow, >100% strict → red, exactly 100% stays yellow per trigger parity with core). `role="status"` (yellow) vs `role="alert"` (red) for a11y. Flagged core bug: discarded `with_company()` return at `sale_order.py:772`. New ACs: AC-LIVE-1, AC-NAV-1, AC-A11Y-1.
+- [x] Architecture Design → `memory-bank/creative/customer-credit-limit-warning-two-tier-warning-architecture.md` — Decision: Option (c) refined — new addon `addons/sale_credit_limit_warning/`, `_inherit`-extends `sale.order` with two new non-stored fields (`credit_warning_level`, `credit_limit_detail`) computed from one shared figures dict; view re-targeted via `inherit_id`/`xpath` on the existing banner div. `addons/sale/` and `addons/account/` stay byte-identical to upstream. Core's `partner_credit_warning` field/tests untouched (avoids breaking `@tagged('post_install')` assertions in `test_credit_limit.py`). Resolves Creative Q1/Q4.
+- [x] UI/UX Design → `memory-bank/creative/customer-credit-limit-warning-banner-uiux.md` — Decision: full two-tier Bootstrap color mapping (`alert-warning` approaching / `alert-danger` over), precedented by `addons/account_edi/views/account_move_views.xml:114-131`. Exact copy templates for both tiers, `float_compare`-based boundary math (not raw float comparison), icon + label redundant cues for color-independence. Resolves Creative Q2/Q3.
+
+## Design Critique (advisory)
+
+**CREATIVE CRITIQUE**: skipped — `unresolved:no-companion` (Codex companion glob empty on this machine; `creative-critique: codex` in projectConfig, `availability: auto` → silent fallback, no critique run this pass).
 
 ---
 
 ## Execution State
 
 **Build Status**: IDLE
-**Current Phase**: CREATIVE
-**Current Step**: Planning complete; Architecture + UI/UX creative phases pending
-**Last Completed**: Step 6 - Finalize plan
+**Current Phase**: CREATIVE → BUILD
+**Current Step**: All creative phases complete
 **Can Resume**: NO
 
+**CREATIVE CRITIQUE**: skipped — unresolved:no-companion (glob=∅, no `.local/codex-cache.md`)
+
 ### Active Sub-Agents
-(none)
+- User Journey Design: COMPLETE
+- Architecture Design: COMPLETE
+- UI/UX Design: COMPLETE
 
 ### Completed Steps
-(none)
+- Step 6 - Finalize plan: COMPLETE
+- User Journey Design: COMPLETE (2026-09-18) - Output: memory-bank/creative/customer-credit-limit-warning-banner-user-journey.md
+- Architecture Design: COMPLETE (2026-09-18) - Output: memory-bank/creative/customer-credit-limit-warning-two-tier-warning-architecture.md
+- UI/UX Design: COMPLETE (2026-09-18) - Output: memory-bank/creative/customer-credit-limit-warning-banner-uiux.md
