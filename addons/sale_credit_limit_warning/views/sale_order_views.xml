@@ -28,12 +28,16 @@
                 <field name="credit_limit_detail" nolabel="1"/>
             </xpath>
             <!-- New sibling banner for the earlier, 'approaching' tier.
-                 role="alert" on both tiers per the DECIDED UI/UX doc
-                 (customer-credit-limit-warning-banner-uiux.md Accessibility
-                 Requirements: "role=alert on both divs"). -->
+                 role="status" (polite) here vs role="alert" (assertive) on
+                 the 'over' tier above, per the User Journey doc's AC-A11Y-1
+                 (customer-credit-limit-warning-banner-user-journey.md):
+                 this tier recomputes on every order-line edit, so an
+                 assertive role would interrupt screen-reader speech on
+                 nearly every keystroke while the customer is merely
+                 approaching their limit. -->
             <xpath expr="//field[@name='partner_credit_warning']/.."
                    position="after">
-                <div class="alert alert-warning" role="alert"
+                <div class="alert alert-warning" role="status"
                      invisible="credit_warning_level != 'approaching'">
                     <i class="fa fa-exclamation-triangle"
                        title="Approaching credit limit" aria-hidden="true"/>
