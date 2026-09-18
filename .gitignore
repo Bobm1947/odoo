@@ -7,6 +7,7 @@ _build/
 !.github
 !.mailmap
 !.weblate.json
+!memory-bank/**/.gitkeep
 # compiled python files
 *.py[co]
 __pycache__/
