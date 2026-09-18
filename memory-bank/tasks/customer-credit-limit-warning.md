@@ -125,7 +125,7 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 - [ ] `addons/sale_credit_limit_warning/tests/test_credit_limit_warning.py` — new (see Test Strategy)
 
 ### Phases
-- [ ] Phase 1: Two-tier compute logic — scaffold the new addon; extend `sale.order`'s credit-warning compute (or its severity classification) to distinguish "approaching" (>=80%, <=100%) from "over limit" (>100%) from "none"; unit/integration tests across the full boundary matrix (AC-HAPPY-1, AC-HAPPY-2, AC-HAPPY-3)
+- [x] Phase 1: Two-tier compute logic — scaffold the new addon; extend `sale.order`'s credit-warning compute (or its severity classification) to distinguish "approaching" (>=80%, <=100%) from "over limit" (>100%) from "none"; unit/integration tests across the full boundary matrix (AC-HAPPY-1, AC-HAPPY-2, AC-HAPPY-3)
 - [ ] Phase 2: Banner UI + access parity — extend the existing form-view banner div via `_inherit` to render the correct Bootstrap severity class per tier; verify the banner stays visible to Sales users without Accounting-group field access (AC-ENTRY-1, AC-ERROR-1)
 - [ ] Phase 3: End-to-end flow + regression guard — E2E test walking the full entry-to-success flow (open Sale Order → add lines crossing 80% then 100% → banner updates live with correct text/severity at each step); confirm no regression in core's existing `test_credit_limit.py` suite
 
@@ -143,9 +143,13 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 
 ## Execution State
 
-**Build Status**: IDLE
-**Current Phase**: CREATIVE → BUILD
-**Current Step**: All creative phases complete
+**Build Status**: RUNNING
+**Current Build**: Phase 1: Two-tier compute logic (customer-credit-limit-warning)
+**Build Started**: 2026-09-18
+**Phase Number**: 1 of 3
+**Is Multi-Phase**: YES
+**Current Phase**: BUILD (Phase 1 complete, Phase 2 pending)
+**Current Step**: Step 11 - Git completion
 **Can Resume**: NO
 
 **CREATIVE CRITIQUE**: skipped — unresolved:no-companion (glob=∅, no `.local/codex-cache.md`)
@@ -160,3 +164,10 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 - User Journey Design: COMPLETE (2026-09-18) - Output: memory-bank/creative/customer-credit-limit-warning-banner-user-journey.md
 - Architecture Design: COMPLETE (2026-09-18) - Output: memory-bank/creative/customer-credit-limit-warning-two-tier-warning-architecture.md
 - UI/UX Design: COMPLETE (2026-09-18) - Output: memory-bank/creative/customer-credit-limit-warning-banner-uiux.md
+- Phase 1 - Step 3 TDD Agent: COMPLETE (2026-09-18) - New addon `addons/sale_credit_limit_warning/` (model layer only): `_get_credit_warning_ratio`, `_get_credit_limit_figures`, `_build_credit_limit_detail`, `_compute_credit_limit_warning_tier` on `sale.order` (`_inherit`); 9 tests, RED confirmed then GREEN
+- Phase 1 - Step 7 Integration Verification: COMPLETE (2026-09-18) - 9/9 addon tests, 221/221 core `sale` regression, flake8 clean (after orchestrator lint-formatting fixes: line length + lambda-to-def + `# noqa` on `__init__.py` imports, no logic changes), `git diff --stat -- addons/sale addons/account` empty
+- Phase 1 - Step 8 Code Review: COMPLETE (2026-09-18) - APPROVED. 2 non-blocking recommendations deferred to Phase 2/3: (a) use `float_compare` instead of raw float comparison in the tier classification for robustness against non-round currency amounts; (b) add multi-currency/multi-company/`state=='sale'` test coverage for the 80% tier
+- Phase 1 - Step 9 Documentation: COMPLETE (2026-09-18) - techContext.md updated with new addon reference; systemPatterns.md/productBrief.md unchanged (no new pattern, no user-facing change yet)
+
+### Guard & Recovery Log
+- Phase 1: Step 7 lint gate FAIL (28 flake8 violations: E501 line-too-long, E731 lambda-assign, F401 unused `__init__.py` imports) → orchestrator applied direct mechanical formatting fixes (no logic change) + `# noqa` per repo's own `addons/sale_margin/__init__.py` precedent → re-verified: flake8 clean, 9/9 + 221/221 tests still passing, upstream diff still empty → PASS
