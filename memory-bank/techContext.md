@@ -46,7 +46,7 @@
 Key first-party addons include:
 - `addons/sale/` — Sales orders, quotations, shared credit machinery
 - `addons/account/` — Invoicing, accounting, credit limit configuration
-- `addons/sale_credit_limit_warning/` — **NEW (Phase 1–2)** — Two-tier approaching/exceeded customer credit limit banner on Sales Orders: compute layer extends `sale.order` with non-stored fields `credit_warning_level` (Selection: none/approaching/over) and `credit_limit_detail` (Text), threshold configurable via `ir.config_parameter`; view layer (`sale_order_views.xml`) displays as Bootstrap alert boxes (yellow "approaching", red "over") in the Sales Order form
+- `addons/sale_credit_limit_warning/` — **NEW (Phase 1–3, complete)** — Two-tier approaching/exceeded customer credit limit banner on Sales Orders: compute layer extends `sale.order` with non-stored fields `credit_warning_level` (Selection: none/approaching/over) and `credit_limit_detail` (Text), threshold configurable via `ir.config_parameter`; view layer (`sale_order_views.xml`) displays as Bootstrap alert boxes (yellow "approaching", red "over") in the Sales Order form; end-to-end integration tests via `TestE2ELiveCreditLimitFlow` (Form()-driven threshold crossing, confirmation protection, ARIA-role compliance)
 
 Plus 618+ other first-party modules covering CRM, Inventory, HR, Manufacturing, etc., and 228+ `l10n_*` localization packages.
 
