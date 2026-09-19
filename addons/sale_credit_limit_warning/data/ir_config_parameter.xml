@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Part of Odoo. See LICENSE file for full copyright and licensing details. -->
+<odoo>
+    <data noupdate="1">
+        <record id="sale_credit_limit_warning_approaching_ratio" model="ir.config_parameter">
+            <field name="key">sale_credit_limit_warning.approaching_ratio</field>
+            <field name="value">0.8</field>
+        </record>
+    </data>
+</odoo>
