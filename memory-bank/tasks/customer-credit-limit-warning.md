@@ -1,13 +1,13 @@
 ---
 slug: customer-credit-limit-warning
 feature: customer-credit-limit-warning
-status: CREATIVE_COMPLETE
+status: BUILD_COMPLETE
 ---
 
 # customer-credit-limit-warning: Customer Credit Limit Warning
 
 **Complexity**: Level 3 (inherited from customer-credit-limit-warning)
-**Status**: CREATIVE_COMPLETE
+**Status**: BUILD_COMPLETE
 **Roadmap**: customer-credit-limit-warning
 **Branch**: feature/customer-credit-limit-warning
 **Worktree**: N/A
@@ -127,7 +127,7 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 ### Phases
 - [x] Phase 1: Two-tier compute logic — scaffold the new addon; extend `sale.order`'s credit-warning compute (or its severity classification) to distinguish "approaching" (>=80%, <=100%) from "over limit" (>100%) from "none"; unit/integration tests across the full boundary matrix (AC-HAPPY-1, AC-HAPPY-2, AC-HAPPY-3)
 - [x] Phase 2: Banner UI + access parity — extend the existing form-view banner div via `_inherit` to render the correct Bootstrap severity class per tier; verify the banner stays visible to Sales users without Accounting-group field access (AC-ENTRY-1, AC-ERROR-1)
-- [ ] Phase 3: End-to-end flow + regression guard — E2E test walking the full entry-to-success flow (open Sale Order → add lines crossing 80% then 100% → banner updates live with correct text/severity at each step); confirm no regression in core's existing `test_credit_limit.py` suite
+- [x] Phase 3: End-to-end flow + regression guard — E2E test walking the full entry-to-success flow (open Sale Order → add lines crossing 80% then 100% → banner updates live with correct text/severity at each step); confirm no regression in core's existing `test_credit_limit.py` suite
 
 ## Creative Phases
 
@@ -143,12 +143,12 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 
 ## Execution State
 
-**Build Status**: RUNNING
-**Current Build**: Phase 2: Banner UI + access parity (customer-credit-limit-warning)
+**Build Status**: COMPLETE
+**Current Build**: Phase 3: End-to-end flow + regression guard (customer-credit-limit-warning)
 **Build Started**: 2026-09-18
-**Phase Number**: 2 of 3
+**Phase Number**: 3 of 3
 **Is Multi-Phase**: YES
-**Current Phase**: BUILD (Phase 2 complete, Phase 3 pending)
+**Current Phase**: BUILD_COMPLETE (all 3 phases complete)
 **Current Step**: Step 11 - Git completion
 **Can Resume**: NO
 
@@ -172,8 +172,13 @@ Yes. Route this task through `/bmb:creative` (architecture + UI/UX lanes) before
 - Phase 2 - Step 7 Integration Verification: COMPLETE (2026-09-18) - 12/12 addon tests, 221/221 core `sale` regression, flake8 clean, `git diff --stat -- addons/sale addons/account` empty
 - Phase 2 - Step 8 Code Review: COMPLETE (2026-09-18) - APPROVED WITH NON-BLOCKING RECOMMENDATIONS. Orchestrator applied both recommendations directly (small, non-logic XML edits, no fix-loop re-dispatch needed): (a) `role="status"` on the approaching-tier div reverted to `role="alert"` on both tiers, matching the DECIDED UI/UX creative doc's explicit a11y requirement ("role=alert on both divs"); (b) removed the self-contradictory `role="img"` from both decorative icons, keeping `aria-hidden="true"` alone. Re-verified post-fix: 12/12 addon tests still passing, flake8 clean, no view-validator warnings
 - Phase 2 - Step 9 Documentation: COMPLETE (2026-09-18) - techContext.md `sale_credit_limit_warning` entry updated "(Phase 1)" → "(Phase 1–2)" noting the view layer; systemPatterns.md/productBrief.md unchanged (standard `inherit_id`+xpath pattern already documented, no new architectural pattern or product-level capability)
+- Phase 3 - Step 3 TDD Agent: COMPLETE (2026-09-19) - New `addons/sale_credit_limit_warning/tests/test_e2e_live_flow.py` (class `TestE2ELiveCreditLimitFlow`, `tests/__init__.py` updated); 3 new E2E tests covering AC-LIVE-1 (Form()-driven live threshold-crossing walk, no save, bidirectional), AC-NAV-1 (`action_confirm()` never blocked, banner retires post-confirm), AC-A11Y-1 (tier legible from text + ARIA role alone); no production code changed (Phase 1-2 logic already satisfied all three ACs). RED surfaced a test-authoring bug (invalid post-`Form()` assertion), fixed in-context, then GREEN 15/15
+- Phase 3 - Step 7 Integration Verification: COMPLETE (2026-09-19) - 15/15 addon tests, 7/7 core `sale:TestSaleOrderCreditLimit` regression, flake8 clean, `git diff --stat -- addons/sale addons/account` empty
+- Phase 3 - Step 8 Code Review: COMPLETE (2026-09-19) - CHANGES REQUIRED (1 blocking) then APPROVED after fix. Blocking finding: `test_confirm_never_blocked_and_banner_absent_after_confirm` ran under the privileged default test user, so it did not actually regression-guard the `.sudo()` elevation in `_get_credit_limit_figures()` through `action_confirm()` — a dropped `.sudo()` would not have been caught. Orchestrator fixed directly (test-only change, no re-dispatch needed): added `cls.sales_user` fixture and re-ran the test under `with_user(self.sales_user)` for the full draft→confirm flow. Re-verified: 15/15 addon tests, flake8 clean, upstream diff still empty
+- Phase 3 - Step 9 Documentation: COMPLETE (2026-09-19) - techContext.md `sale_credit_limit_warning` entry updated "(Phase 1–2)" → "(Phase 1–3, complete)"; systemPatterns.md/productBrief.md unchanged (no new pattern, no new product-level capability — test-only phase)
 
 ### Guard & Recovery Log
 - Phase 1: Step 7 lint gate FAIL (28 flake8 violations: E501 line-too-long, E731 lambda-assign, F401 unused `__init__.py` imports) → orchestrator applied direct mechanical formatting fixes (no logic change) + `# noqa` per repo's own `addons/sale_margin/__init__.py` precedent → re-verified: flake8 clean, 9/9 + 221/221 tests still passing, upstream diff still empty → PASS
 - Phase 2: Step 8 code review non-blocking findings (role attribute deviated from DECIDED UI/UX doc; self-contradictory role="img"+aria-hidden) → orchestrator fixed directly (cheap XML-attribute edits, no TDD re-dispatch) → re-verified: 12/12 tests, flake8 clean → PASS
 - Post-Phase-2 human review: the orchestrator's role-attribute fix above resolved a cross-document conflict (UI/UX doc says `role="alert"` on both tiers; User Journey doc's AC-A11Y-1 says `role="status"` (polite) on approaching / `role="alert"` (assertive) on over, specifically so a banner that recomputes on every order-line edit doesn't interrupt screen-reader speech while the customer is merely approaching their limit) by silently picking the UI/UX doc without surfacing the conflict. Human reviewed and chose the User Journey doc's a11y rationale: reverted the approaching-tier div to `role="status"` (over tier stays `role="alert"`). Re-verified: 12/12 addon tests, flake8 clean, `git diff --stat -- addons/sale addons/account` empty. Committed on `feature/customer-credit-limit-warning`.
+- Phase 3: Step 8 code review BLOCKING finding (access-control regression test used the privileged default user instead of a restricted Sales user, so it didn't actually prove the `.sudo()` elevation survives `action_confirm()`) → orchestrator fixed directly (test-only, well-specified edit: added `sales_user` fixture + `with_user()`, no TDD re-dispatch needed) → re-verified: 15/15 addon tests, flake8 clean, upstream diff still empty → PASS. All 3 phases of this task are now BUILD_COMPLETE.
