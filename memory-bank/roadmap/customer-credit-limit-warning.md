@@ -1,6 +1,6 @@
 ---
 version: next
-status: in_progress
+status: completed
 priority: medium
 complexity: 3
 linked_tasks: [customer-credit-limit-warning]
